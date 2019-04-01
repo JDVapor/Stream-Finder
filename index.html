@@ -5,17 +5,46 @@
 
   <meta charset="utf-8">
 
-  <title>project01</title>
+
+  <title>project 1</title>
 
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-  <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css" />
-  <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script src="https://code.jquery.com/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.core.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase.js"></script>
+
 </head>
 
 <body>
+  <div class="userSearch">
+    <a class="active" href="#home">Stream Finder</a>
+    <input type="text" placeholder="Search..">
+    <button type="submit"><i class="searchBtn"></i></button>
+  </div>
+  <div class="row">
+    <form class="col s12">
+      <div class="row">
+        <div class="input-field col s6">
+          <input placeholder="Placeholder" id="user_name" type="text" class="validate">
+          <label for="user_name">Username</label>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="password" type="password" class="validate">
+            <label for="password">Password</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="email" type="email" class="validate">
+            <label for="email">Email</label>
+          </div>
+        </div>
+      </div>
+  </div>
+  </form>
+  </div>
 
   <script type="text/javascript" src="assets/javascript/app.js"></script>
 
