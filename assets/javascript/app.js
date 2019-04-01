@@ -1,10 +1,10 @@
 //when submit button is clicked
-$(???).on("click", function() {
-    
-    //the name variable should be the value of the user's search.
-    var name = ??;
-    var queryUrl = "http://www.omdbapi.com/?apikey=trilogy&s=" + name + "&plot=short&";
-    
+$("#searchBtn).on("click", function() {
+
+    //the input variable should be the value of the user's search.
+    var input = $("#userSearch").val();
+    var queryUrl = "http://www.omdbapi.com/?apikey=trilogy&s=" + input + "&plot=short&";
+
 
     $.ajax({
         url: queryUrl,
@@ -12,7 +12,6 @@ $(???).on("click", function() {
     })
     .then(function(response) {
         console.log(response);
-
 
         //creating a movie div to house all of the information, can be changed to specific div in html if needed
         var movieDiv = $("<div class='movie");
@@ -41,7 +40,7 @@ $(???).on("click", function() {
         var writer = response.writer;
         var displayedWriter = $("<p>").text("Writer: " + writer);
         movieDiv.append(displayedWriter);
-        
+
         //finding and displaying actors
         var actors = response.actors;
         var displayedActors = $("<p>").text("Top Actors: " + actors);
@@ -75,10 +74,11 @@ $(???).on("click", function() {
         var boxOffice = response.box_office;
         var displayedBoxOffice = $("<p>").text("Box Office: " + boxOffice);
         movieDiv.append(displayedBoxOffice);
-        
+
 
     })
-    var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" +  name;
+
+    var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input;
 
     $.ajax({
         url: utellyQueryUrl,
@@ -93,7 +93,7 @@ $(???).on("click", function() {
         var streamingDiv = $("<div class='streaming");
 
         var results = response.results.locations;
-        
+
         results.forEach(function() {
 
             //displaying the name of each streaming service it is on
@@ -105,7 +105,7 @@ $(???).on("click", function() {
             var icon = "icon";
             var url = "url";
             var displayedIcon = $("<img>").attr("src", icon).append($("<a>"), {href: url});
-            streamingDiv.append(displayedIcon);   
+            streamingDiv.append(displayedIcon);
         })
     })
 });
