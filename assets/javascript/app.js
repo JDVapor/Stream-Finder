@@ -34,8 +34,39 @@ var fb = {
   }
 };
 
+
+$("#account").hide();
+
+//needs to be added to html
+$("#loginForm").hide();
+
+
+
+$("#login").on("click ", function(event) {
+  event.preventDefault();
+  $("#login").hide();
+  $("#signup").hide();
+
+  $("#loginForm").show();
+//goes to log in screen for existing accounts
+});
+
+
+
+$("#signup").on("click ", function(event) {
+  event.preventDefault();
+  $("#login").hide();
+  $("#signup").hide();
+
+  $("#account").show();
+
+});
+
+
 $("#createAcc").on("click ", function(event) {
   event.preventDefault();
+
+  $("#account").hide();
 
   console.log('start');
 
@@ -47,7 +78,6 @@ $("#createAcc").on("click ", function(event) {
 
   fb.createUser(newEmail, newPW);
   fb.signInUser(newEmail, newPW);
-
 });
 
 //when submit button is clicked
