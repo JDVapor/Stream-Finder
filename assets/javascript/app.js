@@ -56,6 +56,7 @@ $("#searchBtn").on("click ", function(event) {
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
   var queryUrl = "https://www.omdbapi.com/?apikey=trilogy&t=" + input + "&plot=short&";
+  var imdbId = [];
 
   $.ajax({
       url: queryUrl,
@@ -127,7 +128,18 @@ $("#searchBtn").on("click ", function(event) {
       var displayedBoxOffice = $("<p>").text("Box Office: " + boxOffice);
       $("#boxOfficeNumbers").html(displayedBoxOffice);
 
-    })
+      var key = response.imdbId;
+      console.log(key);
+      
+      //using imdbId found in first ajax call for the second ajax call
+        var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
+        $.ajax({
+          url: tmdbQueryUrl,
+          method: "GET",
+        }).then(function(response){
+            console.log(response);
+        })
+      })
 
   var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input + "&country=us";
 
