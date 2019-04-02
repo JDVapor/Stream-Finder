@@ -8,12 +8,9 @@ var config = {
   messagingSenderId: "1019547739080"
 };
 firebase.initializeApp(config);
-
 var database = firebase.database();
-
 //firebase object for user accounts
 var fb = {
-
   createUser: function(email, password, cb) {
     firebase.auth().createUserWithEmailAndPassword(email, password).then((result) => {
       cb();
@@ -28,7 +25,6 @@ var fb = {
       }
     });
   },
-
   signInUser: function(email, password, cb) {
     firebase.auth().signInWithEmailAndPassword(email, password).then(result => {
       cb();
@@ -45,65 +41,57 @@ var fb = {
     });
   }
 };
-
 $("#account").hide();
-
+$("#profile").hide();
 $("#loginForm").hide();
-
+$("#settings").hide();
+$("#logout").hide();
 $("#login").on("click", function(event) {
   event.preventDefault();
   $("#login").hide();
   $("#signup").hide();
   $("#loginForm").show();
-  //goes to log in screen for existing accounts
 });
-
-
 $("#signup").on("click", function(event) {
   event.preventDefault();
   $("#login").hide();
   $("#signup").hide();
   $("#account").show();
 });
-
 $("#logAcc").on("click", function(event) {
   event.preventDefault();
-
   var existEmail = $("#emailL").val();
-
   var existPW = $("#passwordL").val();
-
   fb.signInUser(existEmail, existPW, (err) => {
     if (err) {
       console.error(err);
     } else {
+      $("#profile").show();
+      $("#settings").show();
+      $("#logout").show();
       $("#loginForm").hide();
     }
   });
 });
-
-
 $("#createAcc").on("click", function(event) {
   event.preventDefault();
-
-
   var newEmail = $("#email").val();
-
   var newPW = $("#password").val();
   fb.createUser(newEmail, newPW, () => {
     fb.signInUser(newEmail, newPW, (err) => {
       console.log("err = ", err);
-
       if (err) {
         console.error(err);
       } else {
+        $("#profile").show();
+        $("#settings").show();
+        $("#logout").show();
         $("#account").hide();
       }
     });
   });
 });
 
-//when submit button is clicked
 $("#searchBtn").on("click", function(event) {
   event.preventDefault();
   //the input variable should be the value of the user's search.
@@ -204,9 +192,8 @@ $("#searchBtn").on("click", function(event) {
       }).then(function(response) {
         var youtubeKey = response[0].key;
         var youtubeLink = "http://youtube.com/watch?v=" + youtubeKey;
-        vid = $("#trailer");
-        vid.attr("src", youtubeLink);
-        var myPlayer = videojs('trailer');
+        var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", encrypted-media);
+        $("#videoDisplay").display(iframe);
       })
     })
 
