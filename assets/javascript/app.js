@@ -161,14 +161,31 @@ $("#searchBtn").on("click ", function(event) {
       var key = response.imdbId;
       console.log(key);
       
-      //using imdbId found in first ajax call for the second ajax call
+      //using imdbId found in first ajax call to find the movie_id
         var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
+        var movieId = [];
         $.ajax({
           url: tmdbQueryUrl,
           method: "GET",
         }).then(function(response){
             console.log(response);
+          var id = response.movie_results[0].id;
+          movieId.prepend(id);
         })
+
+        //using movieId to find video sources and show on Youtube
+        var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId[0] + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
+        $.ajax({
+          url: trailerQueryUrl,
+          method: "GET",
+        }).then(function(response){
+          var youtubeKey = response[0].key;
+          var youtubeLink = "http://youtube.com/watch?v=" + youtubeKey;
+          vid = $("#trailer");
+          vid.attr("src", youtubeLink);
+          var myPlayer = videojs('trailer');
+        })
+
       })
 
   var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input + "&country=us";
