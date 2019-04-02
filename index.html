@@ -4,13 +4,15 @@
 <head>
   <meta charset="utf-8">
 
-  <title>project 1</title>
-  
+  <title>Stream Finder</title>
+
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="https://code.jquery.com/jquery.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.core.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
+  <script src="https://code.jquery.com/jquery.js"></script>
+
 </head>
 
 <body>
@@ -18,7 +20,7 @@
   <a class="active" href="#home">Stream Finder</a>
 
   <div class="row">
-    <form class="col s12">
+    <form id="account" class="col s12">
       <div class="input-field col s6">
         <input id="email" type="email" class="validate">
         <label for="email">Email</label>
@@ -33,19 +35,26 @@
     </form>
   </div>
 
-  <div class="userSearch">
-    <input id="userInput" type="text" placeholder="Search for a movie or show..">
-    <button type="submit" id="searchBtn">Search</button>
-  </div>
+  <div class="row">
+    <form class="col s12">
 
-  <div id="movieDisplay">
-  </div>
+      <div class="userSearch">
+        <input id="userInput" type="text" placeholder="Search for a movie or show...">
+        <button type="submit" id="searchBtn">Search</button>
+      </div>
 
-  <div id="streamDisplay">
+      <div id="movieDisplay">
+      </div>
+
+      <div id="streamDisplay">
+      </div>
+      <div id="icons">
+      </div>
+
+    </form>
   </div>
 
   <script type="text/javascript" src="assets/javascript/app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/5.9.2/firebase.js"></script>
 
 </body>
 

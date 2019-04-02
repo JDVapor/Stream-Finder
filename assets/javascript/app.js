@@ -1,78 +1,54 @@
-// // Initialize Firebase
-// var config = {
-//   apiKey: "AIzaSyAcsj4tXLbrb4kL-F7toML4Mt65-K9snnY",
-//   authDomain: "streamfinder-32af6.firebaseapp.com",
-//   databaseURL: "https://streamfinder-32af6.firebaseio.com",
-//   projectId: "streamfinder-32af6",
-//   storageBucket: "streamfinder-32af6.appspot.com",
-//   messagingSenderId: "1019547739080"
-// }
-// firebase.initializeApp(config)
-// var db = firebase.database();
-//
-// //firebase object for user accounts
-// var fb = {
-//   createUser: function(email, password) {
-//     console.log(email);
-//     console.log(password);
-//     debugger;
-//     firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-//       // Handle Errors here.
-//       var errorCode = error.code;
-//       var errorMessage = error.message;
-//       console.log("ERROR");
-//     })
-//   },
-//   getUser: function() {
-//     firebase.auth().onAuthStateChanged(function(user) {
-//       console.log(user);
-//       if (user) {
-//         console.log(user);
-//         // User is signed in.
-//       } else {
-//         console.log("no user signed in");
-//         // No user is signed in.
-//       }
-//     });
-//   },
-//
-//   signInUser: function(email, password) {
-//     firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
-//       debugger;
-//       // Handle Errors here.
-//       var errorCode = error.code;
-//       var errorMessage = error.message;
-//       // ...
-//     });
-//   }
-//
-//   // writeUserData: function(name, email, password) {
-//   //
-//   //   this.db.ref('users/' + this.counter).set({
-//   //       username: name,
-//   //       email: email,
-//   //       password: password
-//   //     });
-//   //     this.counter++;
-//   // }
-//
-// }
-// fb.getUser();
-//
-// $("#createAcc").on("click ", function() {
-//
-//   console.log('start');
-//   var newEmail = $("#email").val();
-//   console.log(newEmail);
-//   var newPW = $("#password").val();
-//   console.log(newPW);
-//   fb.createUser(newEmail, newPW);
-//   fb.signInUser(newEmail, newPW);
-//
-//
-//   // fb.writeUserData()
-// });
+// Initialize Firebase
+var config = {
+  apiKey: "AIzaSyAcsj4tXLbrb4kL-F7toML4Mt65-K9snnY",
+  authDomain: "streamfinder-32af6.firebaseapp.com",
+  databaseURL: "https://streamfinder-32af6.firebaseio.com",
+  projectId: "streamfinder-32af6",
+  storageBucket: "streamfinder-32af6.appspot.com",
+  messagingSenderId: "1019547739080"
+};
+firebase.initializeApp(config);
 
+var database = firebase.database();
+
+//firebase object for user accounts
+var fb = {
+
+  createUser: function(email, password) {
+    console.log(email);
+    console.log(password);
+    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log("ERROR");
+    })
+  },
+
+  signInUser: function(email, password) {
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+    });
+  }
+};
+
+$("#createAcc").on("click ", function(event) {
+  event.preventDefault();
+
+  console.log('start');
+
+  var newEmail = $("#email").val();
+  console.log(newEmail);
+
+  var newPW = $("#password").val();
+  console.log(newPW);
+
+  fb.createUser(newEmail, newPW);
+  fb.signInUser(newEmail, newPW);
+
+});
 
 //when submit button is clicked
 $("#searchBtn").on("click ", function(event) {
@@ -80,7 +56,6 @@ $("#searchBtn").on("click ", function(event) {
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
   var queryUrl = "http://www.omdbapi.com/?apikey=trilogy&t=" + input + "&plot=short&";
-
 
   $.ajax({
       url: queryUrl,
@@ -152,7 +127,6 @@ $("#searchBtn").on("click ", function(event) {
       var displayedBoxOffice = $("<p>").text("Box Office: " + boxOffice);
       movieDiv.append(displayedBoxOffice);
 
-
     })
 
   var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input;
@@ -168,41 +142,24 @@ $("#searchBtn").on("click ", function(event) {
       console.log(response);
 
       var streamingDiv = $("#streamDisplay");
-      //changed name of variable from results to streams to make it more clear
-      var streams = response.results[0].locations;
-      
-      streams.forEach(function() {
-        var image= $("<img>");
-        for (var i = 0; i < streams.length; i++) {
-          var iconImage = streams[i].icon;
-          var iconUrl = streams[i].url;
-          image.attr("src", iconImage).wrap($('<a>').attr("href", iconUrl));
-        }
-        streamingDiv.append(image);
-      });
 
-      //var icon = response.results[0].locations[0].icon;
-      //var url = response.results[0].locations[0].url;
-
-      console.log(icon);
-
-      console.log(url);
-
-
-      //displaying the name of each streaming service it is on
-
-      var displayedName = $("<p>").text("You can stream " + input + " on " + streams);
+      var displayedName = $("<p>").text("You can stream " + input + " on: ");
       streamingDiv.append(displayedName);
 
-      // displaying the icon and including a link to the streaming service,
-
-
-
-
-
-      // var displayedIcon = $("<img>").attr("src", icon).append($("<a>"), {
-      //   href: url
-      // });
-      // streamingDiv.append(displayedIcon);
+      //changed name of variable from results to streams to make it more clear
+      var streams = response.results[0].locations;
+      console.log(streams);
+      // displaying the icon with a link to the streaming service
+      streams.forEach(function() {
+        for (var i = 0; i < streams.length; i++) {
+          var iconImage = $("<img>");
+          console.log(iconImage);
+          var icon = streams[i].icon;
+          console.log(icon);
+          var iconUrl = streams[i].url;
+          console.log(iconUrl);
+          $('#icons').append('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
+        };
+      });
     })
 });
