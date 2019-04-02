@@ -75,8 +75,8 @@
 
 
 //when submit button is clicked
-$("#searchBtn").on("click ", function() {
-
+$("#searchBtn").on("click ", function(event) {
+  event.preventDefault();
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
   var queryUrl = "http://www.omdbapi.com/?apikey=trilogy&t=" + input + "&plot=short&";
@@ -168,11 +168,21 @@ $("#searchBtn").on("click ", function() {
       console.log(response);
 
       var streamingDiv = $("#streamDisplay");
+      //changed name of variable from results to streams to make it more clear
+      var streams = response.results[0].locations;
+      
+      streams.forEach(function() {
+        var image= $("<img>");
+        for (var i = 0; i < streams.length; i++) {
+          var iconImage = streams[i].icon;
+          var iconUrl = streams[i].url;
+          image.attr("src", iconImage).wrap($('<a>').attr("href", iconUrl));
+        }
+        streamingDiv.append(image);
+      });
 
-      var results = response.results[0].locations[0].display_name;
-
-      var icon = response.results[0].locations[0].icon;
-      var url = response.results[0].locations[0].url;
+      //var icon = response.results[0].locations[0].icon;
+      //var url = response.results[0].locations[0].url;
 
       console.log(icon);
 
@@ -181,10 +191,12 @@ $("#searchBtn").on("click ", function() {
 
       //displaying the name of each streaming service it is on
 
-      var displayedName = $("<p>").text("You can stream " + input + " on " + results);
+      var displayedName = $("<p>").text("You can stream " + input + " on " + streams);
       streamingDiv.append(displayedName);
 
       // displaying the icon and including a link to the streaming service,
+
+
 
 
 
