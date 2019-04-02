@@ -86,6 +86,7 @@ $("#searchBtn").on("click ", function(event) {
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
   var queryUrl = "https://www.omdbapi.com/?apikey=trilogy&t=" + input + "&plot=short&";
+  var imdbId = [];
 
   $.ajax({
       url: queryUrl,
@@ -100,66 +101,77 @@ $("#searchBtn").on("click ", function(event) {
       var imgURL = response.Poster;
       console.log(imgURL);
       //creating an image element to hold the poster
-      var image = $("<img>").attr("src", imgURL);
-      movieDiv.append(image);
+      $("#poster").attr("src", imgURL);
 
       //finding and displaying the rating
       var rating = response.Rated;
       var displayedRating = $("<p>").text("Rating: " + rating);
-      movieDiv.append(displayedRating);
+      $("#mpaaRating").html(displayedRating);
 
       //finding and displaying the release date
       var released = response.Released;
       var displayedReleaseDate = $("<p>").text("Released: " + released);
-      movieDiv.append(displayedReleaseDate);
+      $("#releaseDate").html(displayedReleaseDate);
 
       //finding and displaying director
       var director = response.Director;
       var displayedDirector = $("<p>").text("Director: " + director);
-      movieDiv.append(displayedDirector);
+      $("#movieDirector").html(displayedDirector);
 
       //finding and displaying the writer
       var writer = response.Writer;
       var displayedWriter = $("<p>").text("Writer: " + writer);
-      movieDiv.append(displayedWriter);
+      $("#screenWriter").html(displayedWriter);
 
       //finding and displaying actors
       var actors = response.Actors;
       var displayedActors = $("<p>").text("Top Actors: " + actors);
-      movieDiv.append(displayedActors);
+      $("#mainCast").html(displayedActors);
 
       //finding and displaying genre
       var genre = response.Genre;
       var displayedGenre = $("<p>").text("Genre: " + genre);
+      $("#filmGenre").html(displayedGenre);
 
       //finding and displaying runtime
       var runtime = response.Runtime;
       var displayedRuntime = $("<p>").text("Runtime: " + runtime);
-      movieDiv.append(displayedRuntime);
+      $("#filmRuntime").html(displayedRuntime);
 
       //finding and displaying rotten tomatoes rating
       var rottenTomatoesScore = response.Ratings[1].Value;
       var displayedRottenTomatoesScore = $("<p>").text("Rotten Tomatoes: " + rottenTomatoesScore);
-      movieDiv.append(displayedRottenTomatoesScore);
+      $("#rtScore").html(displayedRottenTomatoesScore);
 
       //finding and displaying Awards
       var awards = response.Awards;
       var displayedAwards = $("<p>").text("Awards: " + awards);
-      movieDiv.append(displayedAwards);
+      $("#majorAwards").html(displayedAwards);
 
       //finding and displaying country of release
       var country = response.Country;
       var displayedCountry = $("<p>").text("Country: " + country);
-      movieDiv.append(displayedCountry);
+      $("#releaseCountry").html(displayedCountry);
 
       //finding and displaying box office
       var boxOffice = response.BoxOffice;
       var displayedBoxOffice = $("<p>").text("Box Office: " + boxOffice);
-      movieDiv.append(displayedBoxOffice);
+      $("#boxOfficeNumbers").html(displayedBoxOffice);
 
-    })
+      var key = response.imdbId;
+      console.log(key);
+      
+      //using imdbId found in first ajax call for the second ajax call
+        var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
+        $.ajax({
+          url: tmdbQueryUrl,
+          method: "GET",
+        }).then(function(response){
+            console.log(response);
+        })
+      })
 
-  var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input;
+  var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input + "&country=us";
 
   $.ajax({
       url: utellyQueryUrl,
@@ -174,7 +186,7 @@ $("#searchBtn").on("click ", function(event) {
       var streamingDiv = $("#streamDisplay");
 
       var displayedName = $("<p>").text("You can stream " + input + " on: ");
-      streamingDiv.append(displayedName);
+      streamingDiv.html(displayedName);
 
       //changed name of variable from results to streams to make it more clear
       var streams = response.results[0].locations;
@@ -182,14 +194,12 @@ $("#searchBtn").on("click ", function(event) {
       // displaying the icon with a link to the streaming service
       streams.forEach(function() {
         for (var i = 0; i < streams.length; i++) {
-          var iconImage = $("<img>");
-          console.log(iconImage);
           var icon = streams[i].icon;
           console.log(icon);
           var iconUrl = streams[i].url;
           console.log(iconUrl);
-          $('#icons').append('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
+          $('#icons').html('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
         };
-      });
+      }) 
     })
 });
