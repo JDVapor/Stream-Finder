@@ -94,6 +94,9 @@ $("#createAcc").on("click", function(event) {
 
 $("#searchBtn").on("click", function(event) {
   event.preventDefault();
+
+  $("#icons").empty();
+
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
   var queryUrl = "https://www.omdbapi.com/?apikey=trilogy&t=" + input + "&plot=short&";
@@ -217,15 +220,13 @@ $("#searchBtn").on("click", function(event) {
       //changed name of variable from results to streams to make it more clear
       var streams = response.results[0].locations;
       console.log(streams);
-      // displaying the icon with a link to the streaming service
-      streams.forEach(function() {
+      // displaying the icon with a link to ALL streaming service
         for (var i = 0; i < streams.length; i++) {
           var icon = streams[i].icon;
           console.log(icon);
           var iconUrl = streams[i].url;
           console.log(iconUrl);
-          $('#icons').html('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
+          $('#icons').append('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
         };
-      })
     })
 });
