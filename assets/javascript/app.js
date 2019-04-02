@@ -14,74 +14,97 @@ var database = firebase.database();
 //firebase object for user accounts
 var fb = {
 
-  createUser: function(email, password) {
-    console.log(email);
-    console.log(password);
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-      // Handle Errors here.
+  createUser: function(email, password, cb) {
+    firebase.auth().createUserWithEmailAndPassword(email, password).then((result) => {
+      cb();
+    }).catch(function(error) {
+      // Handle Errors here
       var errorCode = error.code;
       var errorMessage = error.message;
-      console.log("ERROR");
-    })
+      if (error) {
+        alert("Email already in use / invalid email")
+      } else {
+        cb();
+      }
+    });
   },
 
-  signInUser: function(email, password) {
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+  signInUser: function(email, password, cb) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(result => {
+      cb();
+    }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
+      if (error) {
+        alert("Invalid email/password.")
+        cb(error);
+      } else {
+        cb(null);
+      }
     });
   }
 };
 
-
 $("#account").hide();
 
-//needs to be added to html
 $("#loginForm").hide();
 
-
-
-$("#login").on("click ", function(event) {
+$("#login").on("click", function(event) {
   event.preventDefault();
   $("#login").hide();
   $("#signup").hide();
-
   $("#loginForm").show();
-//goes to log in screen for existing accounts
+  //goes to log in screen for existing accounts
 });
 
 
-
-$("#signup").on("click ", function(event) {
+$("#signup").on("click", function(event) {
   event.preventDefault();
   $("#login").hide();
   $("#signup").hide();
-
   $("#account").show();
+});
 
+$("#logAcc").on("click", function(event) {
+  event.preventDefault();
+
+  var existEmail = $("#emailL").val();
+
+  var existPW = $("#passwordL").val();
+
+  fb.signInUser(existEmail, existPW, (err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      $("#loginForm").hide();
+    }
+  });
 });
 
 
-$("#createAcc").on("click ", function(event) {
+$("#createAcc").on("click", function(event) {
   event.preventDefault();
 
-  $("#account").hide();
-
-  console.log('start');
 
   var newEmail = $("#email").val();
-  console.log(newEmail);
 
   var newPW = $("#password").val();
-  console.log(newPW);
+  fb.createUser(newEmail, newPW, () => {
+    fb.signInUser(newEmail, newPW, (err) => {
+      console.log("err = ", err);
 
-  fb.createUser(newEmail, newPW);
-  fb.signInUser(newEmail, newPW);
+      if (err) {
+        console.error(err);
+      } else {
+        $("#account").hide();
+      }
+    });
+  });
 });
 
 //when submit button is clicked
-$("#searchBtn").on("click ", function(event) {
+$("#searchBtn").on("click", function(event) {
   event.preventDefault();
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
@@ -158,35 +181,34 @@ $("#searchBtn").on("click ", function(event) {
       var displayedBoxOffice = $("<p>").text("Box Office: " + boxOffice);
       $("#boxOfficeNumbers").html(displayedBoxOffice);
 
-      var key = response.imdbId;
+      var key = response.imdbID;
       console.log(key);
-      
+
       //using imdbId found in first ajax call to find the movie_id
         var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
-        var movieId = [];
+        var movieId = "";
         $.ajax({
           url: tmdbQueryUrl,
           method: "GET",
         }).then(function(response){
             console.log(response);
           var id = response.movie_results[0].id;
-          movieId.prepend(id);
+          movieId = id;
         })
 
-        //using movieId to find video sources and show on Youtube
-        var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId[0] + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
-        $.ajax({
-          url: trailerQueryUrl,
-          method: "GET",
-        }).then(function(response){
-          var youtubeKey = response[0].key;
-          var youtubeLink = "http://youtube.com/watch?v=" + youtubeKey;
-          vid = $("#trailer");
-          vid.attr("src", youtubeLink);
-          var myPlayer = videojs('trailer');
-        })
-
+      //using movieId to find video sources and show on Youtube
+      var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId[0] + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
+      $.ajax({
+        url: trailerQueryUrl,
+        method: "GET",
+      }).then(function(response) {
+        var youtubeKey = response[0].key;
+        var youtubeLink = "http://youtube.com/watch?v=" + youtubeKey;
+        vid = $("#trailer");
+        vid.attr("src", youtubeLink);
+        var myPlayer = videojs('trailer');
       })
+    })
 
   var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input + "&country=us";
 
@@ -217,6 +239,6 @@ $("#searchBtn").on("click ", function(event) {
           console.log(iconUrl);
           $('#icons').html('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
         };
-      }) 
+      })
     })
 });
