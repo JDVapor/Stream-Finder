@@ -8,81 +8,95 @@ var config = {
   messagingSenderId: "1019547739080"
 };
 firebase.initializeApp(config);
-
 var database = firebase.database();
-
 //firebase object for user accounts
 var fb = {
-
-  createUser: function(email, password) {
-    console.log(email);
-    console.log(password);
-    firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
-      // Handle Errors here.
+  createUser: function(email, password, cb) {
+    firebase.auth().createUserWithEmailAndPassword(email, password).then((result) => {
+      cb();
+    }).catch(function(error) {
+      // Handle Errors here
       var errorCode = error.code;
       var errorMessage = error.message;
-      console.log("ERROR");
-    })
+      if (error) {
+        alert("Email already in use / invalid email")
+      } else {
+        cb();
+      }
+    });
   },
-
-  signInUser: function(email, password) {
-    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+  signInUser: function(email, password, cb) {
+    firebase.auth().signInWithEmailAndPassword(email, password).then(result => {
+      cb();
+    }).catch(function(error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
+      if (error) {
+        alert("Invalid email/password.")
+        cb(error);
+      } else {
+        cb(null);
+      }
     });
   }
 };
-
-
 $("#account").hide();
-
-//needs to be added to html
+$("#profile").hide();
 $("#loginForm").hide();
-
-
-
-$("#login").on("click ", function(event) {
+$("#settings").hide();
+$("#logout").hide();
+$("#login").on("click", function(event) {
   event.preventDefault();
   $("#login").hide();
   $("#signup").hide();
-
   $("#loginForm").show();
-//goes to log in screen for existing accounts
 });
-
-
-
-$("#signup").on("click ", function(event) {
+$("#signup").on("click", function(event) {
   event.preventDefault();
   $("#login").hide();
   $("#signup").hide();
-
   $("#account").show();
-
 });
-
-
-$("#createAcc").on("click ", function(event) {
+$("#logAcc").on("click", function(event) {
   event.preventDefault();
-
-  $("#account").hide();
-
-  console.log('start');
-
+  var existEmail = $("#emailL").val();
+  var existPW = $("#passwordL").val();
+  fb.signInUser(existEmail, existPW, (err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      $("#profile").show();
+      $("#settings").show();
+      $("#logout").show();
+      $("#loginForm").hide();
+    }
+  });
+});
+$("#createAcc").on("click", function(event) {
+  event.preventDefault();
   var newEmail = $("#email").val();
-  console.log(newEmail);
-
   var newPW = $("#password").val();
-  console.log(newPW);
-
-  fb.createUser(newEmail, newPW);
-  fb.signInUser(newEmail, newPW);
+  fb.createUser(newEmail, newPW, () => {
+    fb.signInUser(newEmail, newPW, (err) => {
+      console.log("err = ", err);
+      if (err) {
+        console.error(err);
+      } else {
+        $("#profile").show();
+        $("#settings").show();
+        $("#logout").show();
+        $("#account").hide();
+      }
+    });
+  });
 });
 
-//when submit button is clicked
-$("#searchBtn").on("click ", function(event) {
+$("#searchBtn").on("click", function(event) {
   event.preventDefault();
+
+  $("#icons").empty();
+
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
   var queryUrl = "https://www.omdbapi.com/?apikey=trilogy&t=" + input + "&plot=short&";
@@ -158,18 +172,33 @@ $("#searchBtn").on("click ", function(event) {
       var displayedBoxOffice = $("<p>").text("Box Office: " + boxOffice);
       $("#boxOfficeNumbers").html(displayedBoxOffice);
 
-      var key = response.imdbId;
+      var key = response.imdbID;
       console.log(key);
-      
-      //using imdbId found in first ajax call for the second ajax call
+
+      //using imdbId found in first ajax call to find the movie_id
         var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
+        var movieId = "";
         $.ajax({
           url: tmdbQueryUrl,
           method: "GET",
         }).then(function(response){
             console.log(response);
+          var id = response.movie_results[0].id;
+          movieId = id;
         })
+
+      //using movieId to find video sources and show on Youtube
+      var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId[0] + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
+      $.ajax({
+        url: trailerQueryUrl,
+        method: "GET",
+      }).then(function(response) {
+        var youtubeKey = response[0].key;
+        var youtubeLink = "http://youtube.com/watch?v=" + youtubeKey;
+        var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", encrypted-media);
+        $("#videoDisplay").display(iframe);
       })
+    })
 
   var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input + "&country=us";
 
@@ -191,15 +220,13 @@ $("#searchBtn").on("click ", function(event) {
       //changed name of variable from results to streams to make it more clear
       var streams = response.results[0].locations;
       console.log(streams);
-      // displaying the icon with a link to the streaming service
-      streams.forEach(function() {
+      // displaying the icon with a link to ALL streaming service
         for (var i = 0; i < streams.length; i++) {
           var icon = streams[i].icon;
           console.log(icon);
           var iconUrl = streams[i].url;
           console.log(iconUrl);
-          $('#icons').html('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
+          $('#icons').append('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
         };
-      }) 
     })
 });
