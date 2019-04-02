@@ -18,13 +18,30 @@
 
 <body>
 
-  <a class="active" href="#home">Stream Finder</a>
-
   <div class="row">
-    <div class="col s6">
-      <button type="submit" id="login">Login</button>
-      <button type="submit" id="signup">Sign Up</button>
+    <nav>
+    <div id= "nav-bar" class="nav-wrapper">
+      <a href="#" class="brand-logo center">Stream Finder</a>
+      <ul id="nav-mobile" class="left hide-on-med-and-down">
+        <li><a href="sass.html" id="login">Login</a></li>
+        <li><a href="badges.html" id="signup">Sign Up</a></li>
+      </ul>
     </div>
+  </nav>
+
+    <form id="loginForm" class="col s12">
+      <div class="input-field col s6">
+        <input id="emailL" type="email" class="validate">
+        <label for="email">Email</label>
+      </div>
+      <div class="input-field col s6">
+        <input id="passwordL" type="password" class="validate">
+        <label for="password">Password</label>
+      </div>
+      <div class="logAcc">
+        <button type="submit" id="logAcc">Log In</button>
+      </div>
+    </form>
 
     <form id="account" class="col s12">
       <div class="input-field col s6">
@@ -39,6 +56,7 @@
         <button type="submit" id="createAcc">Create Account</button>
       </div>
     </form>
+
   </div>
 
   <div class="row">
