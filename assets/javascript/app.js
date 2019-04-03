@@ -7,14 +7,15 @@ var config = {
   storageBucket: "streamfinder-32af6.appspot.com",
   messagingSenderId: "1019547739080"
 };
+toggleNav(false);
 firebase.initializeApp(config);
 var database = firebase.database();
 //firebase object for user accounts
 var fb = {
-  createUser: function(email, password, cb) {
+  createUser: function (email, password, cb) {
     firebase.auth().createUserWithEmailAndPassword(email, password).then((result) => {
       cb();
-    }).catch(function(error) {
+    }).catch(function (error) {
       // Handle Errors here
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -25,55 +26,103 @@ var fb = {
       }
     });
   },
-  signInUser: function(email, password, cb) {
+  signInUser: function (email, password, cb) {
     firebase.auth().signInWithEmailAndPassword(email, password).then(result => {
       cb();
-    }).catch(function(error) {
+
+    }).catch(function (error) {
       // Handle Errors here.
       var errorCode = error.code;
       var errorMessage = error.message;
+
       if (error) {
-        alert("Invalid email/password.")
+        // logged in is false
+        toggleNav(false)
+        alert(error.message)
         cb(error);
       } else {
         cb(null);
+
       }
     });
   }
 };
-$("#account").hide();
-$("#profile").hide();
-$("#loginForm").hide();
-$("#settings").hide();
-$("#logout").hide();
-$("#login").on("click", function(event) {
+
+
+$("#login").on("click", function (event) {
   event.preventDefault();
-  $("#login").hide();
-  $("#signup").hide();
+  // remove sign up form replace with login form when clicking login
+  $("#account").hide();
   $("#loginForm").show();
 });
-$("#signup").on("click", function(event) {
+
+function toggleNav(loggedIn){
+  if (loggedIn){
+    // if someone is logged in 
+
+    // nav bar
+    $("#login").hide();
+    $("#signup").hide();
+    $("#profile").show();
+    $("#loginForm").show();
+    $("#settings").show();
+    $("#logout").show();
+
+    // body
+    $("#loginForm").hide();
+    $("#account").hide();
+  } else { 
+    // if someone is logged out
+
+    // nav bar
+    $("#loginForm").hide();
+    $("#profile").hide();
+    $("#settings").hide();
+    $("#logout").hide();
+    $("#login").show();
+    $("#signup").show();
+
+    // body
+    $("#loginForm").hide();
+    $("#account").hide();
+  }
+}
+
+$("#logout").click(function(){
+  firebase.auth().signOut()
+  .then(function() {
+    // Sign-out successful.
+    console.log("sign out successful");
+    window.location.reload();
+  })
+  .catch(function(error) {
+    // An error happened
+    console.error(error);
+  });
+})
+
+$("#signup").on("click", function (event) {
   event.preventDefault();
-  $("#login").hide();
-  $("#signup").hide();
+  // remove login form replace with sign up form when clicking sign up 
+  $("#loginForm").hide();
   $("#account").show();
 });
-$("#logAcc").on("click", function(event) {
+
+$("#logAcc").on("click", function (event) {
   event.preventDefault();
   var existEmail = $("#emailL").val();
   var existPW = $("#passwordL").val();
   fb.signInUser(existEmail, existPW, (err) => {
     if (err) {
       console.error(err);
+      toggleNav(false);
     } else {
-      $("#profile").show();
-      $("#settings").show();
-      $("#logout").show();
-      $("#loginForm").hide();
+      // logged in is true
+      toggleNav(true);
     }
   });
 });
-$("#createAcc").on("click", function(event) {
+$("#createAcc").on("click", function (event) {
   event.preventDefault();
   var newEmail = $("#email").val();
   var newPW = $("#password").val();
@@ -82,17 +131,15 @@ $("#createAcc").on("click", function(event) {
       console.log("err = ", err);
       if (err) {
         console.error(err);
+        toggleNav(false);
       } else {
-        $("#profile").show();
-        $("#settings").show();
-        $("#logout").show();
-        $("#account").hide();
+        toggleNav(true);
       }
     });
   });
 });
 
-$("#searchBtn").on("click", function(event) {
+$("#searchBtn").on("click", function (event) {
   event.preventDefault();
 
   $("#icons").empty();
@@ -103,10 +150,10 @@ $("#searchBtn").on("click", function(event) {
 
 
   $.ajax({
-      url: queryUrl,
-      method: "GET",
-    })
-    .then(function(response) {
+    url: queryUrl,
+    method: "GET",
+  })
+    .then(function (response) {
       console.log(response);
 
       //creating a movie div to house all of the information, can be changed to specific div in html if needed
@@ -176,49 +223,49 @@ $("#searchBtn").on("click", function(event) {
       console.log(key);
 
       //using imdbId found in first ajax call to find the movie_id
-        var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
-        
-        $.ajax({
-          url: tmdbQueryUrl,
-          headers: {
-            "content-type": "application/json;charset=utf-8",
-          },
-          method: "GET",
-        }).then(function(response){
-            console.log(response);
-          var tmdbId = response.movie_results[0].id;
-          var movieId = tmdbId;
-          console.log(movieId);
-      var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
+      var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
+
       $.ajax({
-        url: trailerQueryUrl,
-        headers: {"content-type": "application/json;charset=utf-8",},
+        url: tmdbQueryUrl,
+        headers: {
+          "content-type": "application/json;charset=utf-8",
+        },
         method: "GET",
-      }).then(function(response) {
+      }).then(function (response) {
         console.log(response);
-        var youtubeKey = response.results[0].key;
-        console.log(youtubeKey);
-        var youtubeLink = "https://youtube.com/embed/" + youtubeKey;
-        console.log(youtubeLink);
-        var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", "encrypted-media");
-        $("#video-display").html(iframe);
-      });
+        var tmdbId = response.movie_results[0].id;
+        var movieId = tmdbId;
+        console.log(movieId);
+        var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
+        $.ajax({
+          url: trailerQueryUrl,
+          headers: { "content-type": "application/json;charset=utf-8", },
+          method: "GET",
+        }).then(function (response) {
+          console.log(response);
+          var youtubeKey = response.results[0].key;
+          console.log(youtubeKey);
+          var youtubeLink = "https://youtube.com/embed/" + youtubeKey;
+          console.log(youtubeLink);
+          var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", "encrypted-media");
+          $("#video-display").html(iframe);
         });
-        
       });
 
-      //using movieId to find video sources and show on Youtube
-      
+    });
+
+  //using movieId to find video sources and show on Youtube
+
   var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input + "&country=us";
 
   $.ajax({
-      url: utellyQueryUrl,
-      headers: {
-        "X-RapidAPI-Key": "f53d91c658msh3e2a2bf0273cc43p1b97a4jsn5ef72aa781b3"
-      },
-      method: "GET",
-    })
-    .then(function(response) {
+    url: utellyQueryUrl,
+    headers: {
+      "X-RapidAPI-Key": "f53d91c658msh3e2a2bf0273cc43p1b97a4jsn5ef72aa781b3"
+    },
+    method: "GET",
+  })
+    .then(function (response) {
       console.log(response);
 
       var streamingDiv = $("#streamDisplay");
@@ -230,12 +277,12 @@ $("#searchBtn").on("click", function(event) {
       var streams = response.results[0].locations;
       console.log(streams);
       // displaying the icon with a link to ALL streaming service
-        for (var i = 0; i < streams.length; i++) {
-          var icon = streams[i].icon;
-          console.log(icon);
-          var iconUrl = streams[i].url;
-          console.log(iconUrl);
-          $('#icons').append('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
-        };
+      for (var i = 0; i < streams.length; i++) {
+        var icon = streams[i].icon;
+        console.log(icon);
+        var iconUrl = streams[i].url;
+        console.log(iconUrl);
+        $('#icons').append('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
+      };
     });
 });
