@@ -183,23 +183,24 @@ $("#searchBtn").on("click", function(event) {
           method: "GET",
         }).then(function(response){
             console.log(response);
-          var id = response.movie_results[0].id;
-          movieId = id;
+          var tmdbId = response.movie_results[0].id;
+          movieId = tmdbId;
+          console.log(tmdbId);
         })
-
-      //using movieId to find video sources and show on Youtube
-      var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId[0] + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
+        var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
       $.ajax({
         url: trailerQueryUrl,
         method: "GET",
       }).then(function(response) {
-        var youtubeKey = response[0].key;
+        var youtubeKey = response.key;
         var youtubeLink = "http://youtube.com/watch?v=" + youtubeKey;
-        var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", encrypted-media);
-        $("#videoDisplay").display(iframe);
+        var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", "encrypted-media");
+        $("#videoDisplay").append(iframe);
       })
-    })
+      })
 
+      //using movieId to find video sources and show on Youtube
+      
   var utellyQueryUrl = "https://utelly-tv-shows-and-movies-availability-v1.p.rapidapi.com/lookup?term=" + input + "&country=us";
 
   $.ajax({
