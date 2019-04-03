@@ -2,6 +2,13 @@ body {
     background-color:#99ccff;
 }
 
+#poster {
+  margin-top: 25px;
+  margin-left: 25px;
+  margin-right: 25px;
+  padding: 15px;
+}
+
 #footer {
    position: fixed;
    width: 100%;
@@ -9,16 +16,17 @@ body {
    text-align: center;
 }
 #movieDisplay {
-    text-align: center;
+  margin-top: 45px;
+  margin-left: 20px;
+  padding-left: 25px;
 }
-
-
 #nav-bar {
     background-color: #383807;
 }
 #streamDisplay {
     text-align: center;
 }
+
 #icons {
     text-align: center;
     spacing: 20px;
@@ -28,6 +36,13 @@ body {
     text-align: center;
     margin-bottom: 20px;
 }
-#footer {
-    padding: 20px;
+
+img {
+  padding: 10px;
+}
+
+#stream {
+  margin: 0px;
+  font-size: 36px;
+  color: white;
 }

@@ -58,7 +58,7 @@ $("#login").on("click", function (event) {
 
 function toggleNav(loggedIn){
   if (loggedIn){
-    // if someone is logged in 
+    // if someone is logged in
 
     // nav bar
     $("#login").hide();
@@ -71,7 +71,7 @@ function toggleNav(loggedIn){
     // body
     $("#loginForm").hide();
     $("#account").hide();
-  } else { 
+  } else {
     // if someone is logged out
 
     // nav bar
@@ -103,7 +103,7 @@ $("#logout").click(function(){
 
 $("#signup").on("click", function (event) {
   event.preventDefault();
-  // remove login form replace with sign up form when clicking sign up 
+  // remove login form replace with sign up form when clicking sign up
   $("#loginForm").hide();
   $("#account").show();
 });
@@ -270,7 +270,7 @@ $("#searchBtn").on("click", function (event) {
 
       var streamingDiv = $("#streamDisplay");
 
-      var displayedName = $("<p>").text("You can stream " + input + " on: ");
+      var displayedName = $('<p id="stream">').text("You can stream " + input + " on: ");
       streamingDiv.html(displayedName);
 
       //changed name of variable from results to streams to make it more clear
