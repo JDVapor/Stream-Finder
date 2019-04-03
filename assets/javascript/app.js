@@ -100,7 +100,7 @@ $("#searchBtn").on("click", function(event) {
   //the input variable should be the value of the user's search.
   var input = $("#userInput").val();
   var queryUrl = "https://www.omdbapi.com/?apikey=trilogy&t=" + input + "&plot=short&";
-  var imdbId = [];
+
 
   $.ajax({
       url: queryUrl,
@@ -177,27 +177,35 @@ $("#searchBtn").on("click", function(event) {
 
       //using imdbId found in first ajax call to find the movie_id
         var tmdbQueryUrl = "https://api.themoviedb.org/3/find/" + key + "?api_key=2f627286a0a498c692e51fcca9afb912&external_source=imdb_id";
-        var movieId = "";
+        
         $.ajax({
           url: tmdbQueryUrl,
+          headers: {
+            "content-type": "application/json;charset=utf-8",
+          },
           method: "GET",
         }).then(function(response){
             console.log(response);
           var tmdbId = response.movie_results[0].id;
-          movieId = tmdbId;
-          console.log(tmdbId);
-        })
-        var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
+          var movieId = tmdbId;
+          console.log(movieId);
+      var trailerQueryUrl = "https://api.themoviedb.org/3/movie/" + movieId + "/videos?api_key=2f627286a0a498c692e51fcca9afb912&language=en-US";
       $.ajax({
         url: trailerQueryUrl,
+        headers: {"content-type": "application/json;charset=utf-8",},
         method: "GET",
       }).then(function(response) {
-        var youtubeKey = response.key;
-        var youtubeLink = "http://youtube.com/watch?v=" + youtubeKey;
+        console.log(response);
+        var youtubeKey = response.results[0].key;
+        console.log(youtubeKey);
+        var youtubeLink = "http://youtube.com/embed/" + youtubeKey;
+        console.log(youtubeLink);
         var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", "encrypted-media");
-        $("#videoDisplay").append(iframe);
-      })
-      })
+        $("#video-display").html(iframe);
+      });
+        });
+        
+      });
 
       //using movieId to find video sources and show on Youtube
       
@@ -229,5 +237,5 @@ $("#searchBtn").on("click", function(event) {
           console.log(iconUrl);
           $('#icons').append('<a href=' + iconUrl + '><img src=' + icon + ' /></a>');
         };
-    })
+    });
 });
