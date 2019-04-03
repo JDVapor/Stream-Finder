@@ -245,7 +245,7 @@ $("#searchBtn").on("click", function (event) {
           console.log(response);
           var youtubeKey = response.results[0].key;
           console.log(youtubeKey);
-          var youtubeLink = "http://youtube.com/embed/" + youtubeKey;
+          var youtubeLink = "https://youtube.com/embed/" + youtubeKey;
           console.log(youtubeLink);
           var iframe = $("<iframe>").attr("width", 560).attr("height", 315).attr("src", youtubeLink).attr("frameborder", 0).attr("allow", "encrypted-media");
           $("#video-display").html(iframe);
